@@ -30,7 +30,7 @@ function Install-RemoteServiceInSession {
     }
     $SourceUri = "https://nuget.eos-solutions.it/upack/tools-labs/download/$($PackageName)?contentOnly=zip&latest"
 
-    if (-not $Credentials) { $Credentials = Get-Credentials }
+    if (-not $Credentials) { $Credentials = Get-Credential }
 
     $Service = Invoke-ScriptInBcContainer -ContainerName $ContainerName -ScriptBlock {
         try {
