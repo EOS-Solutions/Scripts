@@ -30,7 +30,9 @@ function Install-RemoteServiceInSession {
     }
     $SourceUri = "https://nuget.eos-solutions.it/upack/tools-labs/download/$($PackageName)?contentOnly=zip&latest"
 
-    if (-not $Credentials) { $Credentials = Get-Credential }
+    if (-not $Credentials) { 
+        $Credentials = Get-Credential -Message "Enter domain credentials for $(([uri]$SourceUri).Authority)"
+    }
 
     $Service = Invoke-ScriptInBcContainer -ContainerName $ContainerName -ScriptBlock {
         try {
