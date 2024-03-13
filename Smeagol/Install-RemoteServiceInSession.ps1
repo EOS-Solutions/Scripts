@@ -14,6 +14,9 @@ function Install-RemoteServiceInSession {
         [Parameter(Mandatory = $false)]
         [String] $TargetPath,
 
+        [Parameter(Mandatory = $false)]
+        [string] $SourceFeed = "tools-labs",
+
         # Specifies the credentials to use to download the package.
         [Parameter(Mandatory = $false)]
         [pscredential] $Credentials,
@@ -28,7 +31,7 @@ function Install-RemoteServiceInSession {
     if (-not $TargetPath) {
         $TargetPath = "C:\Run"
     }
-    $SourceUri = "https://nuget.eos-solutions.it/upack/tools-labs/download/$($PackageName)?contentOnly=zip&latest"
+    $SourceUri = "https://nuget.eos-solutions.it/upack/$SourceFeed/download/$($PackageName)?contentOnly=zip&latest"
 
     if (-not $Credentials) { 
         $Credentials = Get-Credential -Message "Enter domain credentials for $(([uri]$SourceUri).Authority)"
