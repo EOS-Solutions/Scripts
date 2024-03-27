@@ -4,6 +4,7 @@
 #>
 function Install-RemoteServiceInSession {
 
+    [CmdletBinding(DefaultParameterSetName = 'SourceFeed')]
     param(
         # Specifies the container name where to install the service.
         [Parameter(Mandatory = $true)]
@@ -14,11 +15,16 @@ function Install-RemoteServiceInSession {
         [Parameter(Mandatory = $false)]
         [String] $TargetPath,
 
-        [Parameter(Mandatory = $false)]
+        # Specifies the source feed to use.
+        [Parameter(Mandatory = $true, ParameterSetName = "SourceUri")]
+        [string] $SourceUri,
+
+        # Specifies the source feed to use.
+        [Parameter(Mandatory = $false, ParameterSetName = "SourceFeed")]
         [string] $SourceFeed = "tools-labs",
 
-        # Specifies the credentials to use to download the package.
-        [Parameter(Mandatory = $false)]
+        # Specifies the credentials to use to download the package. Only required if 'SourceFeed' is used.
+        [Parameter(Mandatory = $false, ParameterSetName = "SourceFeed")]
         [pscredential] $Credentials,
 
         # If specified, the service is started, should it be already installed but stopped
@@ -27,14 +33,13 @@ function Install-RemoteServiceInSession {
     )
 
     $PackageName = "Bare.WebApi"
+    if (-not $TargetPath) { $TargetPath = "C:\Run" }
 
-    if (-not $TargetPath) {
-        $TargetPath = "C:\Run"
-    }
-    $SourceUri = "https://nuget.eos-solutions.it/upack/$SourceFeed/download/$($PackageName)?contentOnly=zip&latest"
-
-    if (-not $Credentials) { 
-        $Credentials = Get-Credential -Message "Enter domain credentials for $(([uri]$SourceUri).Authority)"
+    if ($PSCmdlet.ParameterSetName -eq "SourceFeed") {
+        $SourceUri = "https://nuget.eos-solutions.it/upack/$SourceFeed/download/$($PackageName)?contentOnly=zip&latest"
+        if (-not $Credentials) { 
+            $Credentials = Get-Credential -Message "Enter domain credentials for $(([uri]$SourceUri).Authority)"
+        }
     }
 
     $Service = Invoke-ScriptInBcContainer -ContainerName $ContainerName -ScriptBlock {
