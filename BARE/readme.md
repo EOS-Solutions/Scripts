@@ -1,3 +1,11 @@
+# First Step
+If you have already NVT Remote Service installed, before installing Bare you need to uninstall NVT.
+
+Execute this script:
+````
+iex ". { $(irm https://raw.githubusercontent.com/EOS-Solutions/Scripts/master/BARE/UninstallNVT.ps1 -Headers @{"Cache-Control" = "no-cache"}) }"
+````
+
 # Install
 
 Use the following script to install BARE into a container from any powershell session (as administrator, if your docker setup requires it).
