@@ -27,6 +27,9 @@ function Install-RemoteServiceInSession {
         [Parameter(Mandatory = $false, ParameterSetName = "SourceFeed")]
         [pscredential] $Credentials,
 
+        [Parameter(Mandatory = $false)]
+        [switch] $SkipAuthentication,
+
         # If specified, the service is started, should it be already installed but stopped
         [Parameter(Mandatory = $false)]
         [switch] $EnsureRunning
@@ -37,10 +40,12 @@ function Install-RemoteServiceInSession {
 
     if ($PSCmdlet.ParameterSetName -eq "SourceFeed") {
         $SourceUri = "https://nuget.eos-solutions.it/upack/$SourceFeed/download/$($PackageName)?contentOnly=zip&latest"
-        if (-not $Credentials) { 
+        if ((-not $Credentials) -and (-not $SkipAuthentication)) { 
             $Credentials = Get-Credential -Message "Enter domain credentials for $(([uri]$SourceUri).Authority)"
         }
     }
+
+    if ($SkipAuthentication) { $Credentials = $null }
 
     $Service = Invoke-ScriptInBcContainer -ContainerName $ContainerName -ScriptBlock {
         try {
