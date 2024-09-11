@@ -36,9 +36,4 @@ if ((Test-Path $daemonPath) -eq $false){
 
 write-host "Updating Envirorment variables"
 
-
-$var = [System.Environment]::GetEnvironmentVariable("DOCKER_HOST", [EnvironmentVariableTarget]::Machine)
-if (";$path;" -notlike "*;$($dockerDir)*") {
-    [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$dockerDir", [EnvironmentVariableTarget]::Machine)
-    $env:Path = $env:Path + ";$dockerDir"
-}
+[Environment]::SetEnvironmentVariable("DOCKER_HOST","tcp://127.0.0.1:2375", [EnvironmentVariableTarget]::Machine)

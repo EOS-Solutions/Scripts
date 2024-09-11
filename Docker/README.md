@@ -1,34 +1,41 @@
 # Come installare Docker Engine
 
-## prerequisiti
+## Prerequisiti
 
 Se avete docker desktop installato, è necessario rimuoverlo completamente!
 
 Questo però comporterà anche la cancellazione dei vari container, quindi, se necessario, **fatevi un backup dei DB!**
 
-**Per il corretto funzionamento, eseguite tutti gli script di questo documento da un Powershell con i permessi da amministratore. Lanciare gli script con POWERSHELL e non con POWERSHELL ISE!**
+
+> Per fare un backup dei DB ci sono più modalità:
+> 1. Usare BcContainerHelper --> Backup-BcContainerDatabases -containerName test -bakfolder "c:\programdata\bccontainerhelper\extensions\test"
+> 
+> 2. Aprire Sql Server Management Studio (o un programma simile), entrare nell'istanza SQL del container e fare il backup
+
+
+**⚠️ Per il corretto funzionamento, eseguite tutti gli script di questo documento da un Powershell con i permessi da amministratore. Lanciare gli script con POWERSHELL e non con POWERSHELL ISE!**
 
 ### Rimuovere Docker Desktop
 
 Andiamo a disinstallare Docker Desktop dai settings di windows:
 
-1. Apriamo “App e Funzionalità” dalle impostazioni di windows
+1. Apriamo `App e Funzionalità` dalle impostazioni di windows
 2. Cerchiamo Docker Desktop nella lista
 3. Lanciamo la disinstallazione
 
 Una volta finito la disinstallazione, è necessario lanciare uno script powershell per assicurarsi di rimuovere tutti i file che potrebbero essere rimasti.
 
-Eseguiamo quindi il file “1_UninstallDockerDesktop.ps1”
+Eseguiamo quindi il file `1_UninstallDockerDesktop.ps1`
 
-**n.b: Lo script potrebbe mostrare tante scritte rosse, non c’è da preoccuparsi, vuol dire che non ha trovato alcune cartelle ed è cosa buona e giusta**
+**⚠️ Lo script potrebbe mostrare tante scritte rosse, non c’è da preoccuparsi, vuol dire che non ha trovato alcune cartelle ed è cosa buona e giusta**
 
 ### Installazione Docker Engine
 
-Per installare Docker Engine, basterà eseguire il file Powershell “2_InstallUpdateDocker.ps1”
+Per installare Docker Engine, basterà eseguire il file Powershell `2_InstallUpdateDocker.ps1`
 
 ### Aggiornare Docker Engine
 
-Eseguire lo script “2_InstallUpdateDocker.ps1”, controllerà lui se ci sono nuove versioni e se si vi chiederà se vorrete installarle.
+Eseguire lo script `2_InstallUpdateDocker.ps1`, controllerà lui se ci sono nuove versioni e se si vi chiederà se vorrete installarle.
 
 ### Post-Installazione (Facoltativo)
 
@@ -49,19 +56,19 @@ Quale scegliere? Tutte e due sono valide come soluzioni, cambia poco.
 
 #### Esporre docker engine su TCP
 
-Eseguire lo script “3_ExposeDockerTCP.ps1”
+Eseguire lo script `3_ExposeDockerTCP.ps1`
 
-Questo script, andrà a modificare un file “deamon.json” che è un file di configurazione di docker. Qua gli diremo di usare tcp://127.0.0.1:2375 al posto di npipe per comunicare.
+Questo script, andrà a modificare un file `deamon.json` che è un file di configurazione di docker. Qua gli diremo di usare tcp://127.0.0.1:2375 al posto di npipe per comunicare.
 
-Andrà poi a modificare la variabile d’ambiente “DOCKER_HOST” e gli dirà di usare TCP.
+Andrà poi a modificare la variabile d’ambiente `DOCKER_HOST` e gli dirà di usare TCP.
 
 #### Assegnare i permessi all’utente
 
-Eseguire lo script “3_GrantUserPermission.ps1” vi chiederà di inserire il vostro nome utente con il dominio quindi, ad esempio: “EOS\\sprimo”.
+Eseguire lo script `3_GrantUserPermission.ps1` vi chiederà di inserire il vostro nome utente con il dominio quindi, ad esempio: `EOS\\sprimo`.
 
-Una volta finito, il vostro utente sarà dentro ad un gruppo “docker-users” e chiunque sarà li dentro avrà la possibilità di usare docker senza essere admin!
+Una volta finito, il vostro utente sarà dentro ad un gruppo `docker-users` e chiunque sarà li dentro avrà la possibilità di usare docker senza essere admin!
 
-Una volta scelta una di queste due strade, chiudete tutte le finestre di Powershell, poi apritene un’altra **senza i permessi di amministratore,** e provate a eseguire il comando “docker ps -a” e vi dovrà dare una lista dei vostri container!
+Una volta scelta una di queste due strade, chiudete tutte le finestre di Powershell, poi apritene un’altra **senza i permessi di amministratore,** e provate a eseguire il comando `docker ps -a` e vi dovrà dare una lista dei vostri container!
 
 ### Utilizzo di Docker Engine
 
