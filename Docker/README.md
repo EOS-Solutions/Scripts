@@ -15,6 +15,12 @@ Questo però comporterà anche la cancellazione dei vari container, quindi, se n
 
 **⚠️ Per il corretto funzionamento, eseguite tutti gli script di questo documento da un Powershell con i permessi da amministratore. Lanciare gli script con POWERSHELL e non con POWERSHELL ISE!**
 
+***
+> ⚠️ 
+**SCARICANDO QUESTI SCRIPT, È POSSIBILE CHE WINDOWS LI BLOCCHI PER QUESTIONI DI SICUREZZA. Per sbloccarli, andate nelle proprietà del file e selezione "Sblocca"**
+
+***
+
 ### Rimuovere Docker Desktop
 
 Andiamo a disinstallare Docker Desktop dai settings di windows:
@@ -32,6 +38,8 @@ Eseguiamo quindi il file `1_UninstallDockerDesktop.ps1`
 ### Installazione Docker Engine
 
 Per installare Docker Engine, basterà eseguire il file Powershell `2_InstallUpdateDocker.ps1`
+
+>⚠️ È possibile, in caso di mancanza di Feature di Windows, che il pc venga riavviato. In questo caso, rieseguite lo stesso script!
 
 ### Aggiornare Docker Engine
 
