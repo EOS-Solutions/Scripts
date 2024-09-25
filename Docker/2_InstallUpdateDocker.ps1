@@ -14,6 +14,8 @@ function CheckRequirement($ForceRestart) {
     }
 
     if ($needRestart -and $ForceRestart) {
+        Write-Host -ForegroundColor Magenta "The PC must be restarted (5sec)! Remember to run the script again after the restart"
+        Start-Sleep -Seconds 5
         Restart-Computer -Force
     }
 }
