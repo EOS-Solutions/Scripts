@@ -5,6 +5,14 @@ The Gordon Installer is a set of tools to deploy and distribute tools from the G
 - A fancy UI for managing your various tools
 - A CLI that allows you to manage your tools from automation and pipelines
 
+## UI
+
+The "EOS Gordon Installer" user interface can downloaded here:
+
+[Downloaded EOS Gordon Installer](https://eospublictoolsstorage.blob.core.windows.net/installer/Eos.Installer.Downloader.exe)
+
+You can also find the link and some more information on [https://eos-solutions.github.io/Gordon].
+
 ## CLI
 
 Gordon Installer is available as single CLI called "gin" (G)ordon (In)staller.
