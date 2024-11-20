@@ -4,18 +4,47 @@ $LocalPath = [IO.FileInfo]::new("$env:temp\gin\gin.exe")
 if (-not $LocalPath.Directory.Exists) {
     $LocalPath.Directory.Create()
 }
-$RequiresDownload = -not $LocalPath.Exists
-if (-not $RequiresDownload) {
-    $RemoteDate = [DateTime]((Invoke-WebRequest -Method HEAD $RemoteUri).Headers["Last-Modified"][0])
-    Write-Verbose $RemoteDate
-    $LocalDate = $LocalPath.LastWriteTime
-    Write-Verbose $LocalDate
-    $RequiresDownload = $RemoteDate -gt $LocalDate
-}
-if ($RequiresDownload) {
-    Invoke-WebRequest -Uri $RemoteUri -OutFile $LocalPath.FullName
-}
-Write-Host "gin is now available in $($LocalPath.FullName)"
+$success = $false
+$retryCount = 0
+while(-not $success -and ($retryCount -le 3)){
+    try{
+        $RequiresDownload = -not $LocalPath.Exists
+        if (-not $RequiresDownload) {
+            $RemoteFile = (Invoke-WebRequest -Method HEAD $RemoteUri)
+            $RemoteDate = [DateTime]($RemoteFile.Headers["Last-Modified"][0])
+            $RemoteSize = [Int]($RemoteFile.Headers["Content-Length"])
+            Write-Verbose $RemoteDate
+            $LocalDate = $LocalPath.LastWriteTime
+            Write-Verbose $LocalDate
+            $rawMD5 = (Get-FileHash -Path $LocalPath.FullName -Algorithm MD5).Hash
+            $hashBytes = @()
+            for ($i = 0; $i -lt $rawMD5.Length; $i += 2) {
+                $byte = [Convert]::ToByte($rawMD5.Substring($i, 2), 16)
+                $hashBytes += $byte
+            }
 
-$GinPath = $LocalPath.Directory.FullName
-if (-not $env:Path.Contains($GinPath)) { $env:Path += ";$GinPath" }
+            $RequiresDownload = ($RemoteDate -gt $LocalDate) -or ([system.convert]::ToBase64String($hashBytes) -ne $RemoteFile.Headers["Content-MD5"])
+        }
+        
+        if ($RequiresDownload) {
+            Invoke-WebRequest -Uri $RemoteUri -OutFile $LocalPath.FullName
+        }
+        Write-Verbose "Checking file integrity"
+
+
+        & $LocalPath.FullName | out-null
+        $success = $true;
+    } catch{
+        Write-Host "something went wrong. Retrying"
+        $success = $false;
+        $retryCount++
+    }
+}
+
+if($success){
+    Write-Host "gin is available in $($LocalPath.FullName)"
+    $GinPath = $LocalPath.Directory.FullName
+    if (-not $env:Path.Contains($GinPath)) { $env:Path += ";$GinPath" }
+}else{
+    Write-Host "There was a problem installing gin"
+}
