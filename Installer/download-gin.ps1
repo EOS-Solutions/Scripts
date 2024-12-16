@@ -12,7 +12,6 @@ while(-not $success -and ($retryCount -le 3)){
         if (-not $RequiresDownload) {
             $RemoteFile = (Invoke-WebRequest -Method HEAD $RemoteUri)
             $RemoteDate = [DateTime]($RemoteFile.Headers["Last-Modified"][0])
-            $RemoteSize = [Int]($RemoteFile.Headers["Content-Length"])
             Write-Verbose $RemoteDate
             $LocalDate = $LocalPath.LastWriteTime
             Write-Verbose $LocalDate
@@ -35,7 +34,9 @@ while(-not $success -and ($retryCount -le 3)){
         & $LocalPath.FullName | out-null
         $success = $true;
     } catch{
-        Write-Host "something went wrong. Retrying"
+        Write-Host "Something went wrong: $($_.Exception)"
+        Write-Host "Retrying in 2 seconds"
+        Start-Sleep -Seconds 2
         $success = $false;
         $retryCount++
     }
