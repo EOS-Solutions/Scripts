@@ -1,0 +1,10 @@
+{
+    "bc23": {
+        "server": "http://bc23-rtm",
+        "serverInstance": "bc"
+    },
+    "bc24": {
+        "server": "http://bc24-pvw",
+        "serverInstance": "bc"
+    }
+}
