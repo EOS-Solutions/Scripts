@@ -15,7 +15,14 @@ while(-not $success -and ($retryCount -le 3)){
             Write-Verbose $RemoteDate
             $LocalDate = $LocalPath.LastWriteTime
             Write-Verbose $LocalDate
-            $RequiresDownload = $RemoteDate -gt $LocalDate
+            $rawMD5 = (Get-FileHash -Path $LocalPath.FullName -Algorithm MD5).Hash
+            $hashBytes = @()
+            for ($i = 0; $i -lt $rawMD5.Length; $i += 2) {
+                $byte = [Convert]::ToByte($rawMD5.Substring($i, 2), 16)
+                $hashBytes += $byte
+            }
+
+            $RequiresDownload = ($RemoteDate -gt $LocalDate) -or ([system.convert]::ToBase64String($hashBytes) -ne $RemoteFile.Headers["Content-MD5"])
         }
         
         if ($RequiresDownload) {
