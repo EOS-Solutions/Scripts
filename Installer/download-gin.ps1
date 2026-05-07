@@ -1,5 +1,6 @@
 $ErrorActionPreference = "Stop"
 $RemoteUri = "https://eospublictoolsstorage.blob.core.windows.net/installer/gin.exe"
+$IsPS5 = $PSVersionTable.PSVersion.Major -lt 6
 $LocalPath = [IO.FileInfo]::new("$env:temp\gin\gin.exe")
 if (-not $LocalPath.Directory.Exists) {
     $LocalPath.Directory.Create()
@@ -9,10 +10,16 @@ $retryCount = 0
 while (-not $success -and ($retryCount -le 3)) {
     try {
         $RemoteFile = Invoke-WebRequest -Method HEAD $RemoteUri
-        $RemoteDate = [DateTime]$RemoteFile.Headers["Last-Modified"][0]
-        $RemoteLength = [int64]$RemoteFile.Headers["Content-Length"][0]
-        Write-Verbose $RemoteDate
-        Write-Verbose $RemoteLength
+        if (-not $IsPS5) {
+            $RemoteDate = [DateTime]$RemoteFile.Headers["Last-Modified"][0]
+            $RemoteLength = [int64]$RemoteFile.Headers["Content-Length"][0]
+        }
+        else {
+            $RemoteDate = [DateTime]$RemoteFile.Headers["Last-Modified"]
+            $RemoteLength = [int64]$RemoteFile.Headers["Content-Length"]
+        }
+        Write-Host "Remote Date: $RemoteDate"
+        Write-Host "Remote Size: $RemoteLength"
 
         $LocalPath.Refresh()
         $RequiresDownload = -not (Test-Path -LiteralPath $LocalPath.FullName)
